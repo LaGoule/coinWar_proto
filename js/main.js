@@ -1,6 +1,5 @@
 //On créer l'objet qui contiendra tout le jeu
-var game = new Phaser.Game(960, 540, Phaser.AUTO, '', { preload: preload, create: create, update: update });
-
+var game = new Phaser.Game(960, 540, Phaser.AUTO);
 //On créer l'objet qui contiendra les états du jeu
 var gameState = {
   //On charge tout les assets
