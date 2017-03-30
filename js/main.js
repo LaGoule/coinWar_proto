@@ -10,14 +10,16 @@ var gameState = {
 
   //On lance create une fois que les assets sont tous chargés (une fois)
   create: function() {
+    //Basics functions
 
     //Variables principales
-    //0= Nb de coins, 1=
     var j1 = {
-      coinNb: 3
+      coinNb: 3,
+      role: 1
     };
     var j2 = {
-      coinNb: 3
+      coinNb: 3,
+      role: 0
     };
     var gameTurn = 0;
 
@@ -25,23 +27,59 @@ var gameState = {
     var bg = this.add.sprite(0,0,'bg');
     //-var tux = this.add.sprite(0,0,'tux');
 
+    //Chaque joueur lance ces pièces
     var j1Roll = [];
-    var i=0;
-    while(i<j1.coinNb){
+    for(i=0;i<j1.coinNb;i++){
       j1Roll.push(Math.floor(Math.random() * 2));
-      i++;
     };
     var i=0;
 
-    var text = '';
-    while(i<j1Roll.length){
-      text+=j1Roll[i];
-      if(i!=j1Roll.length-1){text+=', '};
-      i++;
-    }
-    var style = { font: "65px Arial", fill: "#ff0022", align: "center" };
+    var j2Roll = [];
+    for(i=0;i<j2.coinNb;i++){
+      j2Roll.push(Math.floor(Math.random() * 2));
+    };
 
-    var t = game.add.text(100, 100, text, style);
+    //On met dans la var jxScore le resultat des lancers
+    var j1Score = '';
+    for(i=0;i<j1Roll.length;i++){
+      j1Score+=j1Roll[i];
+      if(i!=j1Roll.length-1){j1Score+=' - '};
+    }
+    var j2Score = '';
+    for(i=0;i<j2Roll.length;i++){
+      j2Score+=j2Roll[i];
+      if(i!=j2Roll.length-1){j2Score+=' - '};
+    }
+
+
+
+    var j1True = j1False = 0;
+
+    for (var i=0;i<j1Roll.length;i++) {
+        if (j1Roll[i] === 1) {
+            j1True++;
+        }else{
+          j1False++;
+        }
+    };
+    var j1Total = '';
+    if(j1.role){
+      j1Total = j1True;
+    }else{
+      j1Total = j1False;
+    };
+
+    console.log(j1True, j1False);
+
+
+    //Partie dessin
+    //Lancer du J1
+    var style = { font: "65px Arial", fill: "#ff0022", align: "center" };
+    var t = game.add.text(100, 100, j1Score, style);
+    var t2 = game.add.text(370, 100, '= '+j1Total, style);
+    //Lancer du J2
+    var style = { font: "65px Arial", fill: "#00ff66", align: "center" };
+    var t = game.add.text(100, 360, j2Score, style);
 
 
   },
