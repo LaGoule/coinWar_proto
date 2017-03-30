@@ -17,7 +17,7 @@ var gameState = {
 
   //Update se lance toute les frames après l'événement create
   update: function() {
-    bg.x-=5;
+    //bg.x-=5;
   }
 };
 
