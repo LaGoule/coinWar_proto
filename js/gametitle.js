@@ -12,6 +12,4 @@ gametitle.prototype = {
 	playTheGame: function(){
 		this.game.state.start("Match");
 	}
-
-	console.log('3. GameTitle executed.');
 }
