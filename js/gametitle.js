@@ -13,4 +13,3 @@ gametitle.prototype = {
 		this.game.state.start("Match");
 	}
 }
-console.log('3. GameTitle executed.');

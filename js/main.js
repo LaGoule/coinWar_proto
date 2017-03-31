@@ -1,30 +1,27 @@
-//On créer l'objet qui contiendra tout le jeu
-var game = new Phaser.Game(960, 540, Phaser.AUTO);
+var match = function(game){
+	workingButtons = true;
+  matchTurn = 0;
+	score = 0;
 
-//On créer l'objet qui contiendra les états du jeu
-var gameState = {
+  //Constantes de base
+  STARTCOINS = 3;
+  P1VALIGN = 100;
+  P2VALIGN = 360;
+}
+
+//On créer l'état qui gère le match 1v1
+match.prototype = {
   //On charge tout les assets
   preload: function() {
-    this.load.image('bg','res/flatbg.jpg');
   },
-
-  //Ecran Titre ici
-  gameTitle: function() {
-    // (...)
-  },
-
-  //On lance create une fois que les assets sont tous chargés (une fois)
   create: function() {
-    //Constantes de base
-    const cCoins = 3;
-    const p1VAlign = 100;
-    const p2VAlign = 360;
 
+    //Constructor de l'objet Player
     function Player(coins) {
       this.coinNb = coins;
-      this.coinRoll = [];
-      this.counts = [0,0,0];
-      this.sum = 0;
+      this.roll = [];
+      this.rollCounts = [0,0,0];
+      this.rollSum = 0;
       this.role = 0;
       this.turnOn = 0;
       this.score = 0;
@@ -35,58 +32,55 @@ var gameState = {
     //Fonction qui retourne le résultat du lancers
     function rollToString(){
       var str = ''
-      for(i=0;i<this.coinRoll.length;i++){
-        str += this.coinRoll[i];
+      for(i=0;i<this.roll.length;i++){
+        str += this.roll[i];
         //Séparation typo
-        if(i!=this.coinRoll.length-1){ str += ' - '};
+        if(i!=this.roll.length-1){ str += ' - '};
       }
       return str;
     }
 
-    //Fonction qui retourne le total de points comptés
+    //Fonction qui retourne le total de points comptés pour un joueur
     function examineRoll(){
-      for(var i=0;i<this.coinRoll.length;i++) {
-          if (this.coinRoll[i] === 1) {
-            this.counts[1]++;
+      for(var i=0;i<this.roll.length;i++) {
+          if (this.roll[i] === 1) {
+            this.rollCounts[1]++;
           }else{
-            this.counts[0]++;
+            this.rollCounts[0]++;
           }
       }
       //Si le joueur est en phase d'attaque
       if(this.role){
-        this.sum = this.counts[1];
-        var str = this.sum + ' ATT';
+        this.rollSum = this.rollCounts[1];
+        var str = this.rollSum + ' ATT';
       //Sinon
       }else{
-        this.sum = this.counts[0];
-        var str = this.sum + ' DEF';
+        this.rollSum = this.rollCounts[0];
+        var str = this.rollSum + ' DEF';
       }
       return str;
     }
 
-    //Styles de textes
-    var stAtt = { font: "65px Arial", fill: "#ff0022", align: "center" };
-    var stDef = { font: "65px Arial", fill: "#00ff66", align: "center" };
-    var stWin = { font: "30px Arial", fill: "#ffff66", align: "center" };
+
 
     //Création des deux joueurs
-    var p1 = new Player(cCoins);
+    var p1 = new Player(STARTCOINS);
     p1.role=1;
-    var p2 = new Player(cCoins);
+    var p2 = new Player(STARTCOINS);
     p2.role=0;
-    var gameTurn = 0;
+    var matchTurn = 0;
 
-    //On charge un fond au bol
-    var bg = this.add.sprite(0,0,'bg');
+
+
 
     //Chaque joueur lance ces pièces
     //p1
     for(i=0;i<p1.coinNb;i++){
-      p1.coinRoll.push(Math.floor(Math.random() * 2));
+      p1.roll.push(Math.floor(Math.random() * 2));
     };
     //p2
     for(i=0;i<p2.coinNb;i++){
-      p2.coinRoll.push(Math.floor(Math.random() * 2));
+      p2.roll.push(Math.floor(Math.random() * 2));
     };
 
     //On met dans la var pxScore le resultat des lancers
@@ -101,13 +95,18 @@ var gameState = {
     var winner = whoWin();
     function whoWin(){
       var pwin = 2; //draw
-      if(p1.sum>p2.sum){
+      if(p1.rollSum>p2.rollSum){
         pwin = 0; //p1
-      }else if(p1.sum<p2.sum){
+      }else if(p1.rollSum<p2.rollSum){
         pwin = 1; //p2
       }
       return pwin;
     }
+
+    //Styles de textes //Rien à faire là -- à ranger
+    var stAtt = { font: "65px Arial", fill: "#ff0022", align: "center" };
+    var stDef = { font: "65px Arial", fill: "#00ff66", align: "center" };
+    var stWin = { font: "30px Arial", fill: "#ffff66", align: "center" };
 
     //On affiche le resultat
     function showWinner(w){
@@ -129,10 +128,10 @@ var gameState = {
     //Partie dessin
     //Lancer du J1
     var p1Roll = game.add.text(100, p1VAlign, p1Score, stAtt);
-    var t2 = game.add.text(360, p1VAlign, '= '+p1Sum, stAtt);
+    var t2 = game.add.text(360, p1VAlign, '='+ p1Sum, stAtt);
     //Lancer du J2
     var t = game.add.text(100, p2VAlign, p2Score, stDef);
-    var t2 = game.add.text(360, p2VAlign, '= '+p2Sum, stDef);
+    var t2 = game.add.text(360, p2VAlign, '='+ p2Sum, stDef);
     //Vainquer
     var tWin = showWinner(winner);
 
@@ -143,8 +142,3 @@ var gameState = {
 
   }
 };
-
-//On charge l'état dans le jeu
-game.state.add('GameState',gameState);
-//On lance le jeu
-game.state.start('GameState');
